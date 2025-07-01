@@ -8,7 +8,7 @@
   <script src="https://unpkg.com/@supabase/supabase-js"></script>
   <style>
     body {
-      background: #4e342e; /* Brown theme */
+      background: #4e342e;
       color: #fff;
       font-family: 'Arial', sans-serif;
       margin: 0;
@@ -16,7 +16,13 @@
     header {
       background: #3e2723;
       padding: 20px;
-      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+    }
+    header img {
+      height: 40px;
     }
     header h1 {
       margin: 0;
@@ -26,14 +32,17 @@
     .main-container {
       display: flex;
       flex-direction: row;
+      justify-content: center;
+      gap: 20px;
       padding: 10px;
+      max-width: 1000px;
+      margin: auto;
     }
     .upload-form {
       width: 250px;
       background: #5d4037;
       padding: 15px;
       border-radius: 10px;
-      margin-right: 20px;
       height: fit-content;
     }
     .upload-form input,
@@ -57,6 +66,7 @@
     }
     #feed {
       flex: 1;
+      max-width: 700px;
     }
     .feed-item {
       background: #6d4c41;
@@ -115,17 +125,21 @@
     @media (max-width: 768px) {
       .main-container {
         flex-direction: column;
+        padding: 10px;
       }
       .upload-form {
         width: 100%;
-        margin-right: 0;
-        margin-bottom: 20px;
       }
     }
   </style>
 </head>
 <body>
-  <header><h1>SUXCEDO Reels</h1></header>
+  <header>
+    <a href="https://suxcedo.com" target="_blank">
+      <img src="favicon.png" alt="SUXCEDO Logo">
+    </a>
+    <h1>SUXCEDO Reels</h1>
+  </header>
   <div class="main-container">
     <form class="upload-form" id="uploadForm">
       <input type="text" id="title" placeholder="Title" required />
