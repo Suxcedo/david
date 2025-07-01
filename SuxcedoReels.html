@@ -42,6 +42,7 @@
       'https://zoignhmsghszucfemfum.supabase.co',
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvaWduaG1zZ2hzenVjZmVtZnVtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTk4NTIwNzUsImV4cCI6MjAzNTQyODA3NX0.Je7OTtY9jKhR-KK3ieDGGtxcAd29TF1sGuAiYONP7po'
     );
+
     const cloudName = 'dzorvvwp8';
     const uploadPreset = 'Suxcedo_uploads';
     const uploadFolder = 'suxcedo_reels/';
@@ -49,6 +50,8 @@
 
     async function fetchPosts() {
       const { data, error } = await supabase.from('posts').select('*').order('created_at', { ascending: false });
+      console.log("Fetched posts:", data);
+      if (error) console.error("Fetch error:", error);
       feed.innerHTML = '';
       if (data) data.forEach(post => renderPost(post));
     }
@@ -60,6 +63,7 @@
       formData.append('folder', uploadFolder);
       const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/upload`, { method: 'POST', body: formData });
       const data = await res.json();
+      console.log("Cloudinary uploaded URL:", data.secure_url);
       return data.secure_url;
     }
 
@@ -121,10 +125,11 @@
       const file = document.getElementById("mediaInput").files[0];
       const mediaURL = await uploadMedia(file);
       const isVideo = file.type.startsWith("video/");
-      const { data } = await supabase.from('posts').insert([{ title, description: desc, media_url: mediaURL, is_video: isVideo, likes: 0, comments: [] }]).select();
-      if (data && data[0]) {
-        renderPost(data[0]);
-      }
+      const { data, error } = await supabase.from('posts').insert([
+        { title, description: desc, media_url: mediaURL, is_video: isVideo, likes: 0, comments: [] }
+      ]).select();
+      console.log("Insert response:", data, error);
+      if (data && data[0]) renderPost(data[0]);
       e.target.reset();
     });
 
