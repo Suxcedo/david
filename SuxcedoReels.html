@@ -38,7 +38,8 @@
   </div>
 
   <script>
-    const supabase = supabase.createClient(
+    const { createClient } = supabase;
+    const supabaseClient = createClient(
       'https://zoignhmsghszucfemfum.supabase.co',
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvaWduaG1zZ2hzenVjZmVtZnVtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTk4NTIwNzUsImV4cCI6MjAzNTQyODA3NX0.Je7OTtY9jKhR-KK3ieDGGtxcAd29TF1sGuAiYONP7po'
     );
@@ -49,7 +50,7 @@
     const feed = document.getElementById("feed");
 
     async function fetchPosts() {
-      const { data, error } = await supabase.from('posts').select('*').order('created_at', { ascending: false });
+      const { data, error } = await supabaseClient.from('posts').select('*').order('created_at', { ascending: false });
       console.log("Fetched posts:", data);
       if (error) console.error("Fetch error:", error);
       feed.innerHTML = '';
@@ -90,7 +91,7 @@
 
     async function likePost(postId, el) {
       const currentLikes = parseInt(el.textContent.split(' ')[1]) || 0;
-      await supabase.from('posts').update({ likes: currentLikes + 1 }).eq('id', postId);
+      await supabaseClient.from('posts').update({ likes: currentLikes + 1 }).eq('id', postId);
       el.textContent = `❤️ ${currentLikes + 1}`;
     }
 
@@ -103,9 +104,9 @@
       const textarea = btn.previousElementSibling;
       const comment = textarea.value.trim();
       if (!comment) return;
-      const { data } = await supabase.from('posts').select('comments').eq('id', postId).single();
+      const { data } = await supabaseClient.from('posts').select('comments').eq('id', postId).single();
       const newComments = [...(data.comments || []), comment];
-      await supabase.from('posts').update({ comments: newComments }).eq('id', postId);
+      await supabaseClient.from('posts').update({ comments: newComments }).eq('id', postId);
       const list = btn.nextElementSibling;
       const p = document.createElement('p');
       p.textContent = comment;
@@ -114,7 +115,7 @@
     }
 
     async function deletePost(postId) {
-      await supabase.from('posts').delete().eq('id', postId);
+      await supabaseClient.from('posts').delete().eq('id', postId);
       fetchPosts();
     }
 
@@ -125,7 +126,7 @@
       const file = document.getElementById("mediaInput").files[0];
       const mediaURL = await uploadMedia(file);
       const isVideo = file.type.startsWith("video/");
-      const { data, error } = await supabase.from('posts').insert([
+      const { data, error } = await supabaseClient.from('posts').insert([
         { title, description: desc, media_url: mediaURL, is_video: isVideo, likes: 0, comments: [] }
       ]).select();
       console.log("Insert response:", data, error);
